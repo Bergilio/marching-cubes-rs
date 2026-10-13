@@ -18,11 +18,11 @@ impl Mesh {
         let mut st = String::new();
 
         for v in &self.vertices {
-            st.push_str(&format!("v {} {} {}", v.x, v.y, v.z));
+            st.push_str(&format!("v {} {} {}\n", v.x, v.y, v.z));
         }
 
         for c in self.indices.chunks(3) {
-            st.push_str(&format!("f {} {} {}", c[0] + 1, c[1] + 1, c[2] + 1));
+            st.push_str(&format!("f {} {} {}\n", c[0] + 1, c[1] + 1, c[2] + 1));
         }
 
         st

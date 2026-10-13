@@ -13,11 +13,7 @@ impl Vec3 {
     }
 
     pub fn lerp(self, other: Vec3, factor: f32) -> Vec3 {
-        match factor {
-            0.0 => self,
-            1.0 => other,
-            _ => self + (other - self) * factor,
-        }
+        self + (other - self) * factor
     }
 }
 

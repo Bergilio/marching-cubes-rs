@@ -41,3 +41,5 @@ impl fmt::Display for MeshExtractorError {
         }
     }
 }
+
+impl std::error::Error for MeshExtractorError {}

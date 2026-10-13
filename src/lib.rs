@@ -1,12 +1,12 @@
 pub mod error;
-pub mod tables;
-pub mod volume;
+pub mod math;
 pub mod mesh;
 pub mod mesh_extractor;
-pub mod math;
+pub mod tables;
+pub mod volume;
 
-pub use volume::Volume;
+pub use error::{MeshExtractorError, VolumeError};
+pub use math::Vec3;
 pub use mesh::Mesh;
 pub use mesh_extractor::MeshExtractor;
-pub use error::{VolumeError, MeshExtractorError};
-pub use math::Vec3;
+pub use volume::Volume;
