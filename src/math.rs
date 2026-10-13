@@ -2,14 +2,14 @@ use std::ops::{Add, Div, Mul, Sub};
 
 #[derive(Debug, Clone, Copy)]
 pub struct Vec3 {
-    pub(crate) x: f32,
-    pub(crate) y: f32,
-    pub(crate) z: f32,
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
 }
 
 impl Vec3 {
     pub const fn new(x: f32, y: f32, z: f32) -> Self {
-        Vec3 { x: x, y: y, z: z }
+        Vec3 { x, y, z }
     }
 
     pub fn lerp(self, other: Vec3, factor: f32) -> Vec3 {

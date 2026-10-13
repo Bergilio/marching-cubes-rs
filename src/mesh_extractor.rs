@@ -1,8 +1,8 @@
 use crate::error::MeshExtractorError;
-use crate::volume::Volume;
-use crate::mesh::Mesh;
 use crate::math::Vec3;
-use crate::tables::{EDGE_TABLE, EDGE_VERTICES, VERTEX_OFFSET, TRI_TABLE};
+use crate::mesh::Mesh;
+use crate::tables::{EDGE_TABLE, EDGE_VERTICES, TRI_TABLE, VERTEX_OFFSET};
+use crate::volume::Volume;
 
 pub struct MeshExtractor {
     iso_value: f32,
@@ -13,7 +13,7 @@ impl MeshExtractor {
         if !iso_value.is_finite() {
             return Err(MeshExtractorError::NonFiniteIsovalue(iso_value));
         }
-        Ok(MeshExtractor {iso_value})
+        Ok(MeshExtractor { iso_value })
     }
 
     pub fn extract(&self, volume: &Volume) -> Mesh {
@@ -31,8 +31,6 @@ impl MeshExtractor {
             for y in 0..volume.height - 1 {
                 let y_offset = z_offset + y * y_stride;
                 for x in 0..volume.width - 1 {
-                    let coordinates = Vec3::new(x as f32, y as f32, z as f32);
-
                     let i0 = x + y_offset;
                     let i1 = i0 + 1;
                     let i2 = i0 + 1 + y_stride;
@@ -41,11 +39,20 @@ impl MeshExtractor {
                     let i5 = i1 + z_stride;
                     let i6 = i2 + z_stride;
                     let i7 = i3 + z_stride;
-                    let corner_index = [i0, i1, i2, i3, i4, i5, i6, i7];
+                    let corner_values = [
+                        volume.voxels[i0],
+                        volume.voxels[i1],
+                        volume.voxels[i2],
+                        volume.voxels[i3],
+                        volume.voxels[i4],
+                        volume.voxels[i5],
+                        volume.voxels[i6],
+                        volume.voxels[i7],
+                    ];
 
                     let mut cube_index = 0;
-                    for (v, idx) in corner_index.iter().enumerate() {
-                        if volume.voxels[*idx] <= self.iso_value {
+                    for (v, val) in corner_values.iter().enumerate() {
+                        if *val <= self.iso_value {
                             cube_index |= 1 << v;
                         }
                     }
@@ -56,15 +63,15 @@ impl MeshExtractor {
                     }
 
                     let mut edge_points = [None; 12];
+                    let coordinates = Vec3::new(x as f32, y as f32, z as f32);
                     for e in 0..12 {
                         if (intersected_edges & (1 << e)) != 0 {
                             let va = EDGE_VERTICES[e].0;
                             let vb = EDGE_VERTICES[e].1;
                             let voa = VERTEX_OFFSET[va];
                             let vob = VERTEX_OFFSET[vb];
-                            let factor = (self.iso_value - volume.voxels[corner_index[va]])
-                                / (volume.voxels[corner_index[vb]]
-                                    - volume.voxels[corner_index[va]]);
+                            let factor = (self.iso_value - corner_values[va])
+                                / (corner_values[vb] - corner_values[va]);
                             let pos_a = coordinates + voa;
                             let pos_b = coordinates + vob;
                             edge_points[e] = Some(pos_a.lerp(pos_b, factor));
@@ -76,7 +83,8 @@ impl MeshExtractor {
                         if i == -1 {
                             break;
                         }
-                        mesh.vertices.push(edge_points[i as usize].expect("Corrupt TRI_TABLE being used"));
+                        mesh.vertices
+                            .push(edge_points[i as usize].expect("Corrupt TRI_TABLE being used"));
                         mesh.indices.push(mesh.vertices.len() - 1);
                     }
                 }
