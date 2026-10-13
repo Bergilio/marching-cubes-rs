@@ -11,4 +11,18 @@ impl Mesh {
             indices: Vec::new(),
         }
     }
+
+    pub fn to_obj(&self) -> String {
+        let mut st = String::new();
+
+        for v in &self.vertices {
+            st.push_str(&format!("v {} {} {}", v.0, v.1, v.2));
+        }
+
+        for c in self.indices.chunks(3) {
+            st.push_str(&format!("f {} {} {}", c[0] + 1, c[1] + 1, c[2] + 1));
+        }
+
+        st
+    }
 }
