@@ -23,7 +23,7 @@ impl Volume {
             .ok_or(VolumeError::DimensionOverflow)?;
 
         if expected_len != voxels.len() {
-            return Err(VolumeError::LengthMissmatch {
+            return Err(VolumeError::LengthMismatch {
                 expected: expected_len,
                 actual: voxels.len(),
             });

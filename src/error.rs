@@ -3,7 +3,7 @@ use std::fmt;
 #[derive(Debug, PartialEq, Eq)]
 pub enum VolumeError {
     DimensionOverflow,
-    LengthMissmatch { expected: usize, actual: usize },
+    LengthMismatch { expected: usize, actual: usize },
     NonFiniteVoxel(usize),
 }
 
@@ -13,7 +13,7 @@ impl fmt::Display for VolumeError {
             VolumeError::DimensionOverflow => {
                 write!(f, "Volume dimensions cause an arithmetic overflow")
             }
-            VolumeError::LengthMissmatch { expected, actual } => write!(
+            VolumeError::LengthMismatch { expected, actual } => write!(
                 f,
                 "Voxel buffer length {} does not match expected {}",
                 actual, expected
