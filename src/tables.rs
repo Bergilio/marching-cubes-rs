@@ -1,14 +1,16 @@
+use crate::math::Vec3;
+
 // Lookup tables
 
-pub const VERTEX_OFFSET: [(usize, usize, usize); 8] = [
-    (0, 0, 0),
-    (1, 0, 0),
-    (1, 1, 0),
-    (0, 1, 0),
-    (0, 0, 1),
-    (1, 0, 1),
-    (1, 1, 1),
-    (0, 1, 1),
+pub const VERTEX_OFFSET: [Vec3; 8] = [
+    Vec3::new(0.0, 0.0, 0.0),
+    Vec3::new(1.0, 0.0, 0.0),
+    Vec3::new(1.0, 1.0, 0.0),
+    Vec3::new(0.0, 1.0, 0.0),
+    Vec3::new(0.0, 0.0, 1.0),
+    Vec3::new(1.0, 0.0, 1.0),
+    Vec3::new(1.0, 1.0, 1.0),
+    Vec3::new(0.0, 1.0, 1.0),
 ];
 
 pub const EDGE_VERTICES: [(usize, usize); 12] = [

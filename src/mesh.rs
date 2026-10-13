@@ -1,11 +1,13 @@
+use crate::math::Vec3;
+
 #[derive(Debug)]
 pub struct Mesh {
-    pub vertices: Vec<(f32, f32, f32)>,
+    pub vertices: Vec<Vec3>,
     pub indices: Vec<usize>,
 }
 
 impl Mesh {
-    pub(crate) fn new() -> Mesh {
+    pub(crate) fn new() -> Self {
         Mesh {
             vertices: Vec::new(),
             indices: Vec::new(),
@@ -16,7 +18,7 @@ impl Mesh {
         let mut st = String::new();
 
         for v in &self.vertices {
-            st.push_str(&format!("v {} {} {}", v.0, v.1, v.2));
+            st.push_str(&format!("v {} {} {}", v.x, v.y, v.z));
         }
 
         for c in self.indices.chunks(3) {

@@ -14,7 +14,7 @@ impl Volume {
         height: usize,
         depth: usize,
         voxels: Vec<f32>,
-    ) -> Result<Volume, VolumeError> {
+    ) -> Result<Self, VolumeError> {
         let expected_len = width
             .checked_mul(height)
             .ok_or(VolumeError::DimensionOverflow)?;

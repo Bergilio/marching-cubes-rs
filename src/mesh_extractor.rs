@@ -1,6 +1,7 @@
 use crate::error::MeshExtractorError;
 use crate::volume::Volume;
 use crate::mesh::Mesh;
+use crate::math::Vec3;
 use crate::tables::{EDGE_TABLE, EDGE_VERTICES, VERTEX_OFFSET, TRI_TABLE};
 
 pub struct MeshExtractor {
@@ -8,7 +9,7 @@ pub struct MeshExtractor {
 }
 
 impl MeshExtractor {
-    pub fn new(iso_value: f32) -> Result<MeshExtractor, MeshExtractorError> {
+    pub fn new(iso_value: f32) -> Result<Self, MeshExtractorError> {
         if !iso_value.is_finite() {
             return Err(MeshExtractorError::NonFiniteIsovalue(iso_value));
         }
@@ -30,6 +31,8 @@ impl MeshExtractor {
             for y in 0..volume.height - 1 {
                 let y_offset = z_offset + y * y_stride;
                 for x in 0..volume.width - 1 {
+                    let coordinates = Vec3::new(x as f32, y as f32, z as f32);
+
                     let i0 = x + y_offset;
                     let i1 = i0 + 1;
                     let i2 = i0 + 1 + y_stride;
@@ -62,9 +65,9 @@ impl MeshExtractor {
                             let factor = (self.iso_value - volume.voxels[corner_index[va]])
                                 / (volume.voxels[corner_index[vb]]
                                     - volume.voxels[corner_index[va]]);
-                            let pos_a = (x + voa.0, y + voa.1, z + voa.2);
-                            let pos_b = (x + vob.0, y + vob.1, z + vob.2);
-                            edge_points[e] = Some(vertex_interpolation(pos_a, pos_b, factor));
+                            let pos_a = coordinates + voa;
+                            let pos_b = coordinates + vob;
+                            edge_points[e] = Some(pos_a.lerp(pos_b, factor));
                         }
                     }
 
@@ -82,22 +85,4 @@ impl MeshExtractor {
 
         mesh
     }
-}
-
-fn vertex_interpolation(
-    pos_a: (usize, usize, usize),
-    pos_b: (usize, usize, usize),
-    factor: f32,
-) -> (f32, f32, f32) {
-    let v_difference = (
-        (pos_b.0 as f32 - pos_a.0 as f32) * factor,
-        (pos_b.1 as f32 - pos_a.1 as f32) * factor,
-        (pos_b.2 as f32 - pos_a.2 as f32) * factor,
-    );
-
-    (
-        pos_a.0 as f32 + v_difference.0,
-        pos_a.1 as f32 + v_difference.1,
-        pos_a.2 as f32 + v_difference.2,
-    )
 }
